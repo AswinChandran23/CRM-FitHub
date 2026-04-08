@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitHub CRM - Fitness Center Management System</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-dumbbell"></i>
+                    <h1>FitHub CRM</h1>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-section="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li><a href="#" class="nav-link" data-section="members"><i class="fas fa-users"></i> Members</a></li>
+                    <li><a href="#" class="nav-link" data-section="trainers"><i class="fas fa-person-hiking"></i> Trainers</a></li>
+                    <li><a href="#" class="nav-link" data-section="classes"><i class="fas fa-calendar"></i> Classes</a></li>
+                    <li><a href="#" class="nav-link" data-section="payments"><i class="fas fa-credit-card"></i> Payments</a></li>
+                    <li><a href="#" class="nav-link" data-section="attendance"><i class="fas fa-clipboard-check"></i> Attendance</a></li>
+                    <li><a href="#" class="nav-link" data-section="analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <p>FitHub CRM v1.0</p>
+                <small>Smart Fitness Management</small>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="toggle-sidebar" id="toggleSidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 id="pageTitle">Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <div class="realtime-status">
+                        <span class="status-dot"></span>
+                        <span id="realtimeLabel">Live Data</span>
+                    </div>
+                    <button class="btn-icon" id="refreshBtn" title="Refresh Data">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                    <button class="btn-icon" id="notificationBtn" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge">0</span>
+                    </button>
+                    <div class="user-profile" id="userProfileDropdown">
+                        <div class="user-avatar" aria-hidden="true">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <p class="user-name" id="userDisplayName">Admin</p>
+                            <small id="userDisplayRole">Gym Manager</small>
+                        </div>
+                        <i class="fas fa-chevron-down" style="margin-left: 8px; font-size: 12px; cursor: pointer;"></i>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <a href="#" onclick="viewProfile()"><i class="fas fa-user"></i> Profile</a>
+                            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Dashboard Section -->
+                <section id="dashboard-section" class="section active">
+                    <!-- KPI Cards -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon revenue">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3>Total Revenue</h3>
+                                <p class="kpi-value" id="totalRevenue">$0</p>
+                                <small class="kpi-change positive">↑ 12% from last month</small>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-icon members">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3>Active Members</h3>
+                                <p class="kpi-value" id="totalMembers">0</p>
+                                <small class="kpi-change positive">↑ 8% new this month</small>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-icon classes">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3>Active Sessions</h3>
+                                <p class="kpi-value" id="activeSessions">0</p>
+                                <small class="kpi-change neutral">→ 100% occupancy</small>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-icon occupancy">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3>Avg. Occupancy</h3>
+                                <p class="kpi-value" id="avgOccupancy">0%</p>
+                                <small class="kpi-change positive">↑ 5% improvement</small>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-icon retention">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3>Member Retention</h3>
+                                <p class="kpi-value" id="memberRetention">0%</p>
+                                <small class="kpi-change positive">↑ Strong engagement</small>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-icon trainers">
+                                <i class="fas fa-person-hiking"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3>Available Trainers</h3>
+                                <p class="kpi-value" id="availableTrainers">0</p>
+                                <small class="kpi-change neutral">→ All certified</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3>Revenue by Membership Plan</h3>
+                            <canvas id="revenueChart" style="max-height: 300px;"></canvas>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3>Trainer Status</h3>
+                            <div class="trainer-status-container">
+                                <div class="status-item">
+                                    <span class="status-badge available"></span>
+                                    <span>Available: <strong id="trainersAvailable">0</strong></span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-badge in-session"></span>
+                                    <span>In Session: <strong id="trainersInSession">0</strong></span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-badge on-break"></span>
+                                    <span>On Break: <strong id="trainersOnBreak">0</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="recent-activity">
+                        <h3>Recent Activity</h3>
+                        <div class="activity-feed" id="activityFeed">
+                            <p class="empty-state">Loading recent activity...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Members Section -->
+                <section id="members-section" class="section">
+                    <div class="section-header">
+                        <h2>Members Management</h2>
+                        <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Member</button>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <span class="stat-label">Total Members</span>
+                            <span class="stat-value" id="stat-total-members">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Active</span>
+                            <span class="stat-value" id="stat-active-members">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Pending Renewals</span>
+                            <span class="stat-value" id="stat-pending-renewals">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">New This Month</span>
+                            <span class="stat-value" id="stat-new-members">0</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="membersTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Plan</th>
+                                    <th>Status</th>
+                                    <th>Join Date</th>
+                                    <th>Renewal Date</th>
+                                    <th>Classes</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="8" class="text-center">Loading members...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Trainers Section -->
+                <section id="trainers-section" class="section">
+                    <div class="section-header">
+                        <h2>Trainers Management</h2>
+                        <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Trainer</button>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <span class="stat-label">Total Trainers</span>
+                            <span class="stat-value" id="stat-total-trainers">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Available</span>
+                            <span class="stat-value" id="stat-trainers-available">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">In Session</span>
+                            <span class="stat-value" id="stat-trainers-in-session">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Avg Rating</span>
+                            <span class="stat-value" id="stat-avg-rating">0</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="trainersTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Specialization</th>
+                                    <th>Experience</th>
+                                    <th>Rating</th>
+                                    <th>Status</th>
+                                    <th>Availability</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="7" class="text-center">Loading trainers...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Classes Section -->
+                <section id="classes-section" class="section">
+                    <div class="section-header">
+                        <h2>Classes & Schedules</h2>
+                        <button class="btn btn-primary"><i class="fas fa-plus"></i> Create Class</button>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <span class="stat-label">Total Classes</span>
+                            <span class="stat-value" id="stat-total-classes">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Scheduled</span>
+                            <span class="stat-value" id="stat-scheduled-classes">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">In Progress</span>
+                            <span class="stat-value" id="stat-in-progress-classes">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Avg Occupancy</span>
+                            <span class="stat-value" id="stat-class-occupancy">0%</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="classesTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Class Name</th>
+                                    <th>Type</th>
+                                    <th>Trainer</th>
+                                    <th>Schedule</th>
+                                    <th>Enrollment</th>
+                                    <th>Occupancy</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="8" class="text-center">Loading classes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Payments Section -->
+                <section id="payments-section" class="section">
+                    <div class="section-header">
+                        <h2>Payment Management</h2>
+                        <button class="btn btn-primary"><i class="fas fa-plus"></i> Record Payment</button>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <span class="stat-label">Total Transactions</span>
+                            <span class="stat-value" id="stat-total-transactions">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Completed</span>
+                            <span class="stat-value" id="stat-completed-payments">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Total Revenue</span>
+                            <span class="stat-value" id="stat-payment-revenue">$0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Avg Transaction</span>
+                            <span class="stat-value" id="stat-avg-transaction">$0</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="paymentsTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="6" class="text-center">Loading payments...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Attendance Section -->
+                <section id="attendance-section" class="section">
+                    <div class="section-header">
+                        <h2>Attendance Records</h2>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <span class="stat-label">Today's Check-ins</span>
+                            <span class="stat-value" id="stat-today-checkins">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">This Week</span>
+                            <span class="stat-value" id="stat-week-checkins">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Total Records</span>
+                            <span class="stat-value" id="stat-total-attendance">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Avg Daily</span>
+                            <span class="stat-value" id="stat-avg-daily">0</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="attendanceTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Class</th>
+                                    <th>Check-in Time</th>
+                                    <th>Duration</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="5" class="text-center">Loading attendance records...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Analytics Section -->
+                <section id="analytics-section" class="section">
+                    <div class="section-header">
+                        <h2>Analytics & Reports</h2>
+                    </div>
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <h3>Member Growth (30 Days)</h3>
+                            <canvas id="memberGrowthChart" style="max-height: 250px;"></canvas>
+                        </div>
+                        <div class="analytics-card">
+                            <h3>Class Type Distribution</h3>
+                            <canvas id="classTypeChart" style="max-height: 250px;"></canvas>
+                        </div>
+                        <div class="analytics-card">
+                            <h3>Payment Trends</h3>
+                            <canvas id="paymentTrendsChart" style="max-height: 250px;"></canvas>
+                        </div>
+                        <div class="analytics-card">
+                            <h3>Top Trainers</h3>
+                            <div id="topTrainersList"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
